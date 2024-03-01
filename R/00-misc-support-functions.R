@@ -69,6 +69,7 @@ default_control <- function(...) {
     ndConstruction = "product",
     interpolation = 'auto',
     numhessian = FALSE,
+    jacobian = list(method =  'Richardson', method.args = NULL),
     onlynormconst = FALSE,
     method_summaries = c('reuse','correct'),
     verbose=FALSE
@@ -147,6 +148,7 @@ default_control_marglaplace <- function(...) {
     ndConstruction = "product",
     interpolation = 'auto',
     numhessian = FALSE,
+    jacobian = list(method =  'Richardson', method.args = NULL),
     onlynormconst = FALSE,
     method_summaries = c('reuse','correct'),
     verbose = FALSE
@@ -208,6 +210,7 @@ default_control_tmb <- function(...) {
     method = c("BFGS","sparse_trust","trust"),
     negate = TRUE,
     numhessian = TRUE,
+    jacobian = list(method =  'Richardson', method.args = NULL),
     ndConstruction = 'product',
     interpolation = 'auto',
     onlynormconst = FALSE,

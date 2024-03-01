@@ -1127,7 +1127,9 @@ marginal_laplace_tmb <- function(ff,k,startingvalue,transformation = default_tra
 
   # Hessian
   if (control$numhessian) {
-    ff$he <- function(theta) numDeriv::jacobian(ff$gr,theta,method = 'Richardson')
+        ff$he <- function(theta) numDeriv::jacobian(ff$gr, theta, 
+        method = control$jacobian$method, method.args = control$jacobian$method.args)
+ 
   }
   ## Do aghq ##
   # The aghq

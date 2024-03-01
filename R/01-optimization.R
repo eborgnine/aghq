@@ -75,7 +75,8 @@
 #' @importFrom utils installed.packages
 #' @importFrom methods as
 #' @export
-optimize_theta <- function(ff,startingvalue,control = default_control(),...) {
+optimize_theta <- function(ff, startingvalue, 
+  control = default_control(),...) {
   ffa <- ff
   # Negate it if asked
   if (control$negate) {
@@ -92,7 +93,8 @@ optimize_theta <- function(ff,startingvalue,control = default_control(),...) {
   # Add the numerically differentiated hessian for the user, if requested
   if (exists('numhessian',control)) {
     if (control$numhessian) {
-      ffa$he <- function(theta) numDeriv::jacobian(ffa$gr,theta,method = 'Richardson')
+      ffa$he <- function(theta) numDeriv::jacobian(ffa$gr, theta, 
+        method = control$jacobian$method, method.args = control$jacobian$method.args)
     }
   }
 
