@@ -7,8 +7,6 @@
 \usepackage[margin=1in]{geometry}
 \begin{document}
 
-
-
 <<theData>>=
 theCppFile = tempfile(fileext='.cpp')
 file.copy(system.file('extsrc/02_disease.cpp',package='aghq'),theCppFile)
@@ -51,6 +49,7 @@ if(haveTmbstan & haveTMB) {
 }
 @
 
+
 <<theModels>>=
 if(haveTMB) {
 
@@ -69,10 +68,24 @@ if(haveTMB) {
 @
 
 
-<<runModels>>=
+
+<<runModelAghq>>=
 if(haveTMB) {
-  quadmod <- aghq::aghq(ff,9,c(0,0),control = aghq::default_control(negate = TRUE, verbose=TRUE))
+  quadmod <- aghq::aghq(ff,9,c(0,0),
+    control = aghq::default_control(
+      negate = TRUE, 
+      jacobian = list(
+        method = "Richardson", 
+        method.args = list(eps=1e-5, d=1e-5, 
+          zero.tol=sqrt(.Machine$double.eps), 
+          r=6, v=0.5, show.details=TRUE)),
+      verbose=TRUE
+    )
+  )
 }
+@
+
+<<runModelStan>>=
 if(haveTmbstan & haveTMB) {
 stanmod <- tmbstan::tmbstan(
   ff,
