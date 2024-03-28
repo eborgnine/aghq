@@ -335,7 +335,7 @@ safeCholesky = function(H) {
   if(identical(class(result), 'try-error')) {
         # do something barbaric to fix
         # pracma nearest pos def
-    warning("negative eigenvalues in H, approxmiating with pracma::nearest_spd")
+    warning("H not pos def, approxmiating with pracma::nearest_spd")
     if(requireNamespace("pracma")) {
       Hfix = pracma::nearest_spd(H)
       result = Matrix::Cholesky(
@@ -343,7 +343,9 @@ safeCholesky = function(H) {
           perm = TRUE,LDL=FALSE)
     } else {
       warning("pracma package not available, failing")
-      result = diag(ncol(H))
+      result = Matrix::Cholesky(
+          as(Matrix::forceSymmetric(diag(abs(diag(H)))),'sparseMatrix'), 
+          perm = TRUE,LDL=FALSE)
     }
   }
   result
