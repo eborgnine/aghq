@@ -855,11 +855,11 @@ sample_marginal.marginallaplace <- function(quad,M,transformation = quad$transfo
   if (numcores > 1) {
     # mclapply does not preserve the order of its arguments
     # simlist$L <- parallel::mclapply(simlist$H,function(h) chol(Matrix::forceSymmetric(h),perm = FALSE),mc.cores = numcores)
-    simlist$L <- parallel::mclapply(simlist$H,function(h) Matrix::Cholesky(as(Matrix::forceSymmetric(h),'sparseMatrix'),perm = TRUE,LDL=FALSE),mc.cores = numcores)
+    simlist$L <- parallel::mclapply(simlist$H, safeCholesky, mc.cores = numcores)
 
   } else {
     # simlist$L <- lapply(simlist$H,function(h) chol(Matrix::forceSymmetric(h),perm = FALSE))
-    simlist$L <- lapply(simlist$H,function(h) Matrix::Cholesky(as(Matrix::forceSymmetric(h),'sparseMatrix'),perm = TRUE,LDL=FALSE))
+    simlist$L <- lapply(simlist$H,safeCholesky)
 
   }
   simlist$lambda <- exp(quad$normalized_posterior$nodesandweights$logpost_normalized) * quad$normalized_posterior$nodesandweights$weights

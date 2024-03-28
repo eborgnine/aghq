@@ -323,6 +323,32 @@ splice <- function(v,t,j) {
   c(v[1:(j-1)],t,v[j:n])
 }
 
+safeCholesky = function(H) {
+  if(max(abs(as.matrix(H) - t(as.matrix(H)))) > sqrt(.Machine$double.eps)) { 
+    warning("matrix not symmetric")
+    H2 = as.matrix(H)
+    H = (H2 + t(H2))/2
+  }
+  result = try(Matrix::Cholesky(
+    as(Matrix::forceSymmetric(H),'sparseMatrix'), 
+    perm = TRUE,LDL=FALSE), silent=TRUE)
+  if(identical(class(result), 'try-error')) {
+        # do something barbaric to fix
+        # pracma nearest pos def
+    warning("negative eigenvalues in H, approxmiating with pracma::nearest_spd")
+    if(requireNamespace("pracma")) {
+      Hfix = pracma::nearest_spd(H)
+      result = Matrix::Cholesky(
+          as(Matrix::forceSymmetric(Hfix),'sparseMatrix'), 
+          perm = TRUE,LDL=FALSE)
+    } else {
+      warning("pracma package not available, failing")
+      result = diag(ncol(H))
+    }
+  }
+  result
+}
+
 # invert positive def matrix using eigenvalues
 # approximate by nearest pos def matrix if necessary
 # resulting matrix wont produce errors with mvQuad::rescale
